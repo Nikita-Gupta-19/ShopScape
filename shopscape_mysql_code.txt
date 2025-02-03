@@ -1,0 +1,114 @@
+create database shopscape;
+use shopscape;
+
+CREATE TABLE categories (
+    CategoryID INT NOT NULL AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Description TEXT,
+    PRIMARY KEY (CategoryID)
+);
+
+CREATE TABLE products (
+    ProductID INT NOT NULL AUTO_INCREMENT,
+    Name VARCHAR(255) NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    Stock INT DEFAULT 0,
+    CategoryID INT,
+    PRIMARY KEY (ProductID),
+    FOREIGN KEY (CategoryID) REFERENCES categories(CategoryID)
+);
+
+CREATE TABLE users (
+    UserID INT NOT NULL AUTO_INCREMENT,
+    Name VARCHAR(255) NOT NULL,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    Address TEXT,
+    PhoneNumber INT,
+    DateOfBirth DATE,
+    PRIMARY KEY (UserID)
+);
+
+CREATE TABLE orders (
+    OrderID INT NOT NULL AUTO_INCREMENT,
+    OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    TotalAmount DECIMAL(10, 2),
+    UserID INT,
+    PaymentMethod VARCHAR(50),
+    Status ENUM('pending', 'completed', 'shipped', 'canceled') DEFAULT 'shipped',
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (UserID) REFERENCES users(UserID)
+);
+
+CREATE TABLE order_items (
+    OrderID INT NOT NULL,
+    ProductID INT NOT NULL,
+    Quantity INT NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY (OrderID, ProductID),
+    FOREIGN KEY (OrderID) REFERENCES orders(OrderID),
+    FOREIGN KEY (ProductID) REFERENCES products(ProductID)
+);
+
+insert into categories values
+    (1, 'jewellery', 'jewellery for women'),
+    (2, 'tshirt_men', 'tshirt for men'),
+    (3, 'tshirt_women', 'tshirt for women'),
+    (4, 'skirts', 'women skirt'),
+    (5, 'jacket_men', 'jacket for men'),
+    (6, 'shoes_men', 'shoes for men'),
+    (7, 'shoes_women', 'shoes for women'),
+    (8, 'watch_men', 'mens watches'),
+    (9, 'perfume_women', 'perfumes for women'),
+    (10, 'belt_men', 'mens belts'),
+    (11, 'cosmetics', 'women and unisex cosmetics'),
+    (12, 'dress_women', 'dresses for women'),
+    (13, 'skincare', 'unisex and womens skincare products'),
+    (14, 'bags_women', 'bags for women'),
+    (15, 'sweaters_women', 'knitwear winter sweaters for women');
+
+insert into products values
+(1, 'platinum zircon classic ring', 2999, 40, 1),
+(2, 'rose gold earrings', 999, 47, 1),
+(3, 'pearl pendant', 3649, 10, 1),
+(4, 'silver deer heart necklace', 999, 30, 1),
+(5, 'mens hoodies t-shirt', 899, 98, 2),
+(6, 'pure garment dyed cotton shirt', 1999, 20, 2),
+(7, 'girls t-shirt', 499, 56, 3),
+(8, 'relaxed short full sleeves tshirt', 560, 30, 3),
+(9, 'girls pink embro design top', 399, 40, 3),
+(10, 'red crop top women', 499, 90, 3),
+(11, 'black floral wrap midi skirt', 999, 50, 4),
+(12, 'A-line mini skirt', 1999, 60, 4),
+(13, 'men yarn fleece full-zip jacket', 1999, 74, 5),
+(14, 'mens winter leather jackets', 1699, 50, 5),
+(15, 'running and trekking shoes', 3999, 100, 6),
+(16, 'leather formal shoes', 4499, 44, 6),
+(17, 'party heels', 699, 100, 7),
+(18, 'sports claw womens shoes', 2699, 80, 7),
+(19, 'air trekking shoes', 4999, 55, 7),
+(20, 'long boots', 1999, 300, 7),
+(21, 'pocket watch leather pouch', 999, 20, 8),
+(22, 'smart watch vital plus', 2500, 10, 8),
+(23, 'titan 100 ml womens perfume', 499, 60, 9),
+(24, 'vanilla body mist', 299, 36, 9),
+(25, 'mens leather reversible belt', 699, 40, 10),
+(26, 'shampoo conditioner pack', 799, 200, 11),
+(27, 'matte lipstick', 199, 56, 11),
+(28, 'beige compact powder', 499, 70, 11),
+(29, 'body scrub', 399, 37, 11),
+(30, 'kajal', 99, 20, 11),
+(31, 'black bodycon dress', 799, 60, 12),
+(32, 'v neck dress', 899, 50, 12),
+(33, 'white lace dress', 1199, 66, 12),
+(34, 'floral party dress', 1199, 100, 12),
+(35, 'cosrx snail music power essence', 1299, 200, 13),
+(36, 'Cetaphil gentle cleanser', 299, 90, 13),
+(37, 'minimalist moisturizer', 399, 40, 13),
+(38, 'retinol', 899, 32, 13),
+(39, 'serum', 499, 60, 13),
+(40, 'red handbag women', 999, 15, 14),
+(41, 'white tote bag', 199, 70, 14),
+(42, 'knit cardigan', 2999, 60, 15),
+(43, 'oversize sweatshirt', 799, 40, 15);
+
