@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category - ShopScape</title>
+    <link rel="shortcut icon" href="../assets/images/logo/ShopScape.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@6.1.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@6.1.2/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="../assets/css/style-prefix.css">
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="category-header">
+            <h1 id="categoryTitle">Category Products</h1>
+            <nav class="breadcrumb">
+                <a href="../index.html">Home</a> > 
+                <span id="categoryBreadcrumb">Category</span>
+            </nav>
+        </div>
+        
+        <div class="product-grid" id="categoryProducts">
+            <!-- Products will be loaded here -->
+        </div>
+    </div>
+    
+    <script>
+        // Get category from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        
+        if (category) {
+            const categoryName = category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            document.getElementById('categoryTitle').textContent = `${categoryName} Products`;
+            document.getElementById('categoryBreadcrumb').textContent = categoryName;
+            
+            // Load products for this category
+            loadCategoryProducts(category);
+        }
+        
+        async function loadCategoryProducts(category) {
+            try {
+                const response = await fetch(`/api/products?category=${category}`);
+                const products = await response.json();
+                
+                const productGrid = document.getElementById('categoryProducts');
+                
+                if (products.length === 0) {
+                    productGrid.innerHTML = '<p>No products found in this category.</p>';
+                    return;
+                }
+                
+                productGrid.innerHTML = products.map(product => `
+                    <div class="showcase">
+                        <div class="showcase-banner">
+                            <img src="${product.ImagePath || '../assets/images/products/1.jpg'}" 
+                                 alt="${product.Name}" 
+                                 width="300" 
+                                 class="product-img default">
+                        </div>
+                        <div class="showcase-content">
+                            <a href="#" class="showcase-category">${product.categoryName || 'Fashion'}</a>
+                            <h3 class="showcase-title">${product.Name}</h3>
+                            <div class="price-box">
+                                <p class="price">₹${product.Price}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading category products:', error);
+                document.getElementById('categoryProducts').innerHTML = '<p>Error loading products.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

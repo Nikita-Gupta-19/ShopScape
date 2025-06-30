@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - ShopScape</title>
+    <link rel="shortcut icon" href="../assets/images/logo/ShopScape.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@6.1.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@6.1.2/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="../assets/css/style-prefix.css">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .payment-header h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-summary {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .order-summary h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--salmon-pink);
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .payment-methods {
+            margin-bottom: 2rem;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover,
+        .payment-method.selected {
+            border-color: var(--salmon-pink);
+            background: rgba(255, 99, 71, 0.05);
+        }
+        
+        .payment-method input[type="radio"] {
+            margin-right: 1rem;
+        }
+        
+        .qr-code-section {
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        
+        .qr-code-section img {
+            max-width: 200px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        .payment-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--salmon-pink);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e55a4f;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1>Complete Your Payment</h1>
+            <p>Secure payment powered by ShopScape</p>
+        </div>
+        
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div class="total-amount">
+                Total: ₹<span id="orderAmount">0</span>
+            </div>
+            <p>Order ID: <strong id="orderId">#</strong></p>
+        </div>
+        
+        <div class="payment-methods">
+            <h3>Select Payment Method</h3>
+            
+            <div class="payment-method selected" data-method="upi">
+                <input type="radio" name="payment" value="upi" checked>
+                <div>
+                    <strong>UPI Payment</strong>
+                    <p>Pay using Google Pay, PhonePe, Paytm, or any UPI app</p>
+                </div>
+            </div>
+            
+            <div class="payment-method" data-method="card">
+                <input type="radio" name="payment" value="card">
+                <div>
+                    <strong>Credit/Debit Card</strong>
+                    <p>Visa, MasterCard, RuPay accepted</p>
+                </div>
+            </div>
+            
+            <div class="payment-method" data-method="netbanking">
+                <input type="radio" name="payment" value="netbanking">
+                <div>
+                    <strong>Net Banking</strong>
+                    <p>Pay directly from your bank account</p>
+                </div>
+            </div>
+            
+            <div class="payment-method" data-method="cod">
+                <input type="radio" name="payment" value="cod">
+                <div>
+                    <strong>Cash on Delivery</strong>
+                    <p>Pay when your order is delivered</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="qr-code-section" id="qrSection">
+            <h4>Scan QR Code to Pay</h4>
+            <img src="../assets/images/qr-code.jpeg" alt="QR Code for Payment">
+            <p>Scan this QR code using any UPI app to complete your payment</p>
+        </div>
+        
+        <div class="payment-buttons">
+            <button class="btn btn-secondary" onclick="goBack()">Go Back</button>
+            <button class="btn btn-primary" onclick="processPayment()">Complete Payment</button>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            <ion-icon name="checkmark-circle" style="font-size: 3rem; color: #28a745;"></ion-icon>
+            <h3>Payment Successful!</h3>
+            <p>Your order has been placed successfully. You will receive a confirmation email shortly.</p>
+            <button class="btn btn-primary" onclick="goToHome()" style="margin-top: 1rem;">Continue Shopping</button>
+        </div>
+    </div>
+    
+    <script>
+        // Get order details from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+        const amount = urlParams.get('amount');
+        
+        // Display order details
+        if (orderId && amount) {
+            document.getElementById('orderId').textContent = `#${orderId}`;
+            document.getElementById('orderAmount').textContent = amount;
+        }
+        
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                // Remove selected class from all methods
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                
+                // Add selected class to clicked method
+                this.classList.add('selected');
+                
+                // Check the radio button
+                this.querySelector('input[type="radio"]').checked = true;
+                
+                // Show/hide QR code section based on payment method
+                const qrSection = document.getElementById('qrSection');
+                if (this.dataset.method === 'upi') {
+                    qrSection.style.display = 'block';
+                } else {
+                    qrSection.style.display = 'none';
+                }
+            });
+        });
+        
+        function processPayment() {
+            const selectedMethod = document.querySelector('input[name="payment"]:checked').value;
+            
+            // Simulate payment processing
+            const paymentContainer = document.querySelector('.payment-container');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Hide payment form and show success message
+            paymentContainer.style.display = 'none';
+            successMessage.classList.add('show');
+            
+            // In a real application, you would integrate with actual payment gateways
+            console.log(`Processing payment with method: ${selectedMethod}`);
+        }
+        
+        function goBack() {
+            window.history.back();
+        }
+        
+        function goToHome() {
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>
